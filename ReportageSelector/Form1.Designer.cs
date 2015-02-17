@@ -30,10 +30,10 @@
         {
             this.ReportagesListBox = new System.Windows.Forms.ListBox();
             this.ReportagesListBoxLabel = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.PreviewBox = new System.Windows.Forms.PictureBox();
+            this.OkButton = new System.Windows.Forms.Button();
+            this.CancelButton = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.PreviewBox)).BeginInit();
             this.SuspendLayout();
             // 
             // ReportagesListBox
@@ -53,45 +53,47 @@
             this.ReportagesListBoxLabel.TabIndex = 0;
             this.ReportagesListBoxLabel.Text = "Выберите репортаж:";
             // 
-            // pictureBox1
+            // PreviewBox
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(510, 27);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(250, 250);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.PreviewBox.Location = new System.Drawing.Point(510, 27);
+            this.PreviewBox.Name = "PreviewBox";
+            this.PreviewBox.Size = new System.Drawing.Size(250, 250);
+            this.PreviewBox.TabIndex = 2;
+            this.PreviewBox.TabStop = false;
             // 
-            // button1
+            // OkButton
             // 
-            this.button1.Location = new System.Drawing.Point(510, 283);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(250, 42);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "В этот репортаж";
-            this.button1.UseVisualStyleBackColor = true;
+            this.OkButton.Location = new System.Drawing.Point(510, 283);
+            this.OkButton.Name = "OkButton";
+            this.OkButton.Size = new System.Drawing.Size(250, 42);
+            this.OkButton.TabIndex = 1;
+            this.OkButton.Text = "В этот репортаж";
+            this.OkButton.UseVisualStyleBackColor = true;
+            this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
-            // button2
+            // CancelButton
             // 
-            this.button2.Location = new System.Drawing.Point(10, 290);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(98, 28);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Не выпускать";
-            this.button2.UseVisualStyleBackColor = true;
+            this.CancelButton.Location = new System.Drawing.Point(10, 290);
+            this.CancelButton.Name = "CancelButton";
+            this.CancelButton.Size = new System.Drawing.Size(98, 28);
+            this.CancelButton.TabIndex = 2;
+            this.CancelButton.Text = "Не выпускать";
+            this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 332);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.OkButton);
+            this.Controls.Add(this.PreviewBox);
             this.Controls.Add(this.ReportagesListBoxLabel);
             this.Controls.Add(this.ReportagesListBox);
             this.Name = "Form1";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PreviewBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -101,9 +103,9 @@
 
         private System.Windows.Forms.ListBox ReportagesListBox;
         private System.Windows.Forms.Label ReportagesListBoxLabel;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.PictureBox PreviewBox;
+        private System.Windows.Forms.Button OkButton;
+        private System.Windows.Forms.Button CancelButton;
     }
 }
 

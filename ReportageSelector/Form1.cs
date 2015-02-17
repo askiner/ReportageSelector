@@ -15,5 +15,15 @@ namespace ReportageSelector
         {
             InitializeComponent();
         }
+
+        private void OkButton_Click(object sender, EventArgs e)
+        {
+            PreviewBox.Load(@"http://tassphoto.com/thu_web/00000009224/10192756.thw");
+        }
+
+        private void CancelButton_Click(object sender, EventArgs e)
+        {
+            PreviewBox.Load(@"http://tassphoto.com/thu_web/00000009226/10195206.thw");
+        }
     }
 }
