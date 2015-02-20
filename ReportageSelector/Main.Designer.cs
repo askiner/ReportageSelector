@@ -36,6 +36,7 @@
             this.NewReportageBox = new System.Windows.Forms.RadioButton();
             this.NoReportageBox = new System.Windows.Forms.RadioButton();
             this.VisibilityCheckBox = new System.Windows.Forms.CheckBox();
+            this.ProgressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -73,12 +74,13 @@
             this.OkButton.Name = "OkButton";
             this.OkButton.Size = new System.Drawing.Size(250, 42);
             this.OkButton.TabIndex = 1;
-            this.OkButton.Text = "В этот репортаж";
+            this.OkButton.Text = "Выпуск";
             this.OkButton.UseVisualStyleBackColor = true;
             this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
             // CancelButton
             // 
+            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelButton.Location = new System.Drawing.Point(10, 290);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(98, 28);
@@ -123,11 +125,20 @@
             this.VisibilityCheckBox.Text = "Отображать на сайте";
             this.VisibilityCheckBox.UseVisualStyleBackColor = true;
             // 
+            // ProgressBar
+            // 
+            this.ProgressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.ProgressBar.Location = new System.Drawing.Point(0, 336);
+            this.ProgressBar.Name = "ProgressBar";
+            this.ProgressBar.Size = new System.Drawing.Size(772, 23);
+            this.ProgressBar.TabIndex = 6;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(772, 332);
+            this.ClientSize = new System.Drawing.Size(772, 359);
+            this.Controls.Add(this.ProgressBar);
             this.Controls.Add(this.VisibilityCheckBox);
             this.Controls.Add(this.NoReportageBox);
             this.Controls.Add(this.NewReportageBox);
@@ -136,8 +147,13 @@
             this.Controls.Add(this.PreviewBox);
             this.Controls.Add(this.ReportagesListBoxLabel);
             this.Controls.Add(this.ReportagesListBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Main";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Выпуск фото: выбор репортажа";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.Main_Load);
             ((System.ComponentModel.ISupportInitialize)(this.PreviewBox)).EndInit();
             this.ResumeLayout(false);
@@ -155,6 +171,7 @@
         private System.Windows.Forms.RadioButton NewReportageBox;
         private System.Windows.Forms.RadioButton NoReportageBox;
         private System.Windows.Forms.CheckBox VisibilityCheckBox;
+        private System.Windows.Forms.ProgressBar ProgressBar;
     }
 }
 

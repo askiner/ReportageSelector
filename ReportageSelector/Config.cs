@@ -49,7 +49,7 @@ namespace ReportageSelector
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["PreviewTemplate"].ToString();
+                return ConfigurationManager.AppSettings["PreviewTemplate"].ToString();
             }
         }
 
@@ -57,7 +57,7 @@ namespace ReportageSelector
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["VisibleReportageFolder"].ToString();
+                return ConfigurationManager.AppSettings["VisibleReportageFolder"].ToString();
             }
         }
 
@@ -65,7 +65,7 @@ namespace ReportageSelector
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["HiddenReportageFolder"].ToString();
+                return ConfigurationManager.AppSettings["HiddenReportageFolder"].ToString();
             }
         }
 
@@ -73,7 +73,7 @@ namespace ReportageSelector
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["NoReportageFolder"].ToString();
+                return ConfigurationManager.AppSettings["NoReportageFolder"].ToString();
             }
         }
 
@@ -81,17 +81,24 @@ namespace ReportageSelector
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["ReportageDelimeter"].ToString();
+                return ConfigurationManager.AppSettings["ReportageDelimeter"].ToString();
             }
         }
 
-        public static string TempFilePrefix
+        public static string XMLFolder
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["TempFilePrefix"].ToString();
+                return ConfigurationManager.AppSettings["XMLFolder"].ToString();
             }
         }
 
+        public static string Exiftool
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["Exiftool"].ToString();
+            }
+        }
     }
 }

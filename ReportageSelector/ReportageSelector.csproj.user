@@ -12,5 +12,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartArguments>C:\temp\debug\_MJ00377.jpg</StartArguments>
   </PropertyGroup>
 </Project>

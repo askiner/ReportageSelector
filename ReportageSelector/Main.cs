@@ -85,11 +85,12 @@ namespace ReportageSelector
 
         private void OkButton_Click(object sender, EventArgs e)
         {
+            ProgressBar.Value = 0;
 
             if (Program.Files != null && Program.Files.Count > 0)
             {
                 string prefix = "";
-                IProductionMethod methodToProduce;
+                IProductionMethod methodToProduce = null;
 
                 if (NoReportageBox.Checked)
                 {
@@ -104,6 +105,7 @@ namespace ReportageSelector
                         //{
                         //    File
                         //}
+                        //
 
                         if (VisibilityCheckBox.Checked)
                             methodToProduce = new VisibleReportageMethod();
@@ -121,14 +123,22 @@ namespace ReportageSelector
 
                         
                         
-                        }            
+                        }
 
+                List<string> errors = new List<string>();
+                int count = 0;
                 if (Program.Files != null && Program.Files.Count > 0)
                 {
                     foreach (string file in Program.Files)
                     {
-                    
+                        if (methodToProduce.Produce(file, prefix))
+                        {
+                            errors.Add(file);
+                        }
+                        ProgressBar.Value = (int)((count++ / Program.Files.Count) * 100);
                     }
+
+                    ProgressBar.Value = 100;
                 }
 
 
