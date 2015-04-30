@@ -31,6 +31,9 @@ namespace ReportageSelector
             // Init trace for program work
             AddTrace();
 
+            // map special disk to upload production files
+            MapProductionDrive();
+
             TraceMessage(TraceEventType.Verbose, "Open", string.Join(";", args));
 
             Files.AddRange(args);
@@ -208,6 +211,21 @@ namespace ReportageSelector
             //ProgramTrace.TraceData(type, eventId, newArgs);
 
             ProgramTrace.TraceData(type, 0, args);
+        }
+
+        public static void MapProductionDrive()
+        {
+            if (string.IsNullOrEmpty(Config.AttachDiskLetter))
+            {
+                TraceMessage(TraceEventType.Critical, "Не указан параметр: буква для подцепляемого диска - AttachDiskLetter");
+            }
+
+            if (string.IsNullOrEmpty(Config.AttachPath))
+            {
+                TraceMessage(TraceEventType.Critical, "Не указан параметр: путь для подключения диска - AttachPath");
+            }
+
+            DriveSettings.MapNetworkDrive(Config.AttachDiskLetter, Config.AttachPath, Config.AttachUserName, Config.AttachPassword);
         }
     }
 }

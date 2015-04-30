@@ -182,6 +182,28 @@ namespace ReportageSelector
         public static string TmpFolderName { get { return ConfigurationManager.AppSettings["TmpFolderName"].ToString(); } }
 
         public static string PublicationInfoFile { get { return ConfigurationManager.AppSettings["PublicationInfoFile"].ToString(); } }
-        
+
+        public static string AttachDiskLetter { get { return ConfigurationManager.AppSettings["AttachDiskLetter"].ToString(); } }
+        public static string AttachPath { get { return ConfigurationManager.AppSettings["AttachPath"].ToString(); } }
+        public static string AttachUserName 
+        { 
+            get 
+            {
+                if (ConfigurationManager.AppSettings["AttachUserName"] != null)
+                    return ConfigurationManager.AppSettings["AttachUserName"].ToString();
+                else
+                    return null;
+            } 
+        }
+        public static string AttachPassword 
+        { 
+            get 
+            {
+                if (ConfigurationManager.AppSettings["AttachPassword"] != null)
+                    return ConfigurationManager.AppSettings["AttachPassword"].ToString();
+                else
+                    return null;
+            }
+        }
     }
 }
