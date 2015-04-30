@@ -45,21 +45,41 @@ namespace ReportageSelector
         }
     }
 
+    //public interface ILibrary
+    //{
+    //    string Name { get; set; }
+    //    int Id { get; set; }
+    //    string ReportagePath { get; set; }
+    //    string HiddenReportagePath { get; set; }
+    //    string NoReportagePath { get; set; }
+    //    string XmlPath { get; set; }
+    //}
+
+    //public class Library : ILibrary
+    //{
+    //    public string Name { get; set; }
+    //    public int Id { get; set; }
+    //    public string ReportagePath { get; set; }
+    //    public string HiddenReportagePath { get; set; }
+    //    public string NoReportagePath { get; set; }
+    //    public string XmlPath { get; set; }
+    //}
+
     public interface IReportageRepository
     {
-        List<IReportage> GetReportageList();
+        List<IReportage> GetReportageList(int libraryId);
     }
 
     public class ReportageRepository : IReportageRepository
     {
-        public List<IReportage> GetReportageList()
+        public List<IReportage> GetReportageList(int libraryId)
         {
             List<IReportage> newList = new List<IReportage>();
 
             OleDbConnection connection = new OleDbConnection(Config.ConnectionString);
             {
                 connection.Open();
-                OleDbCommand Command = new OleDbCommand(Config.ReportageQuery(), connection);
+                OleDbCommand Command = new OleDbCommand(Config.ReportageQuery(libraryId), connection);
                 using(OleDbDataReader reader = Command.ExecuteReader(CommandBehavior.CloseConnection))
                 {
                     while (reader.Read())

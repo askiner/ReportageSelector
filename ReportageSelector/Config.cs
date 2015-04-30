@@ -16,7 +16,50 @@ namespace ReportageSelector
             }  
         }
 
-        public static int LibraryId 
+        public static string LibrariesXML
+        {
+            get { return ConfigurationManager.AppSettings["LibariesXML"].ToString(); }
+        }
+
+
+
+        public static KeyValuePair<string, int> LibraryId_Lenta 
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["LibraryId_Lenta"]))
+                {
+                    if (ConfigurationManager.AppSettings["LibraryId_Lenta"].IndexOf(";") > 0)
+                    {
+                        string[] parts = ConfigurationManager.AppSettings["LibraryId_Lenta"].Split(';');
+                        return new KeyValuePair<string, int>(parts[0], Convert.ToInt32(parts[1]));
+                    }
+                        
+                }
+
+                return new KeyValuePair<string, int>("Лента ТАСС", 9);
+            }
+        }
+
+        public static KeyValuePair<string, int> LibraryId_Stock
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["LibraryId_Stock"]))
+                {
+                    if (ConfigurationManager.AppSettings["LibraryId_Stock"].IndexOf(";") > 0)
+                    {
+                        string[] parts = ConfigurationManager.AppSettings["LibraryId_Stock"].Split(';');
+                        return new KeyValuePair<string, int>(parts[0], Convert.ToInt32(parts[1]));
+                    }
+
+                }
+
+                return new KeyValuePair<string, int>("Архив ленты ТАСС", 30);
+            }
+        }
+
+        public static int LibraryId
         {
             get
             {
@@ -32,9 +75,9 @@ namespace ReportageSelector
             }
         }
 
-        public static string ReportageQuery()
+        public static string ReportageQuery(int libraryId)
         {
-            return String.Format(ReportageQueryTemplate, Config.LibraryId, Config.LastDaysCount);
+            return String.Format(ReportageQueryTemplate, libraryId, Config.LastDaysCount);
         }
 
         public static string ReportageQueryTemplate
@@ -77,6 +120,30 @@ namespace ReportageSelector
             }
         }
 
+        public static string StockVisibleReportageFolder
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["StockVisibleReportageFolder"].ToString();
+            }
+        }
+
+        public static string StockHiddenReportageFolder
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["StockHiddenReportageFolder"].ToString();
+            }
+        }
+
+        public static string StockNoReportageFolder
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["StockNoReportageFolder"].ToString();
+            }
+        }
+
         public static string ReportageDelimeter
         {
             get
@@ -93,6 +160,14 @@ namespace ReportageSelector
             }
         }
 
+        public static string StockXMLFolder
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["StockXMLFolder"].ToString();
+            }
+        }
+
         public static string Exiftool
         {
             get
@@ -100,5 +175,13 @@ namespace ReportageSelector
                 return ConfigurationManager.AppSettings["Exiftool"].ToString();
             }
         }
+
+        public static string TraceSourceName { get { return ConfigurationManager.AppSettings["TraceSourceName"].ToString(); } }
+        public static string TraceLogPath { get { return ConfigurationManager.AppSettings["TraceLogPath"].ToString(); } }
+        public static string TraceListenerName { get { return ConfigurationManager.AppSettings["TraceListenerName"].ToString(); } }
+        public static string TmpFolderName { get { return ConfigurationManager.AppSettings["TmpFolderName"].ToString(); } }
+
+        public static string PublicationInfoFile { get { return ConfigurationManager.AppSettings["PublicationInfoFile"].ToString(); } }
+        
     }
 }

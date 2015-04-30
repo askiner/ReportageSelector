@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?><libraries>
+  <library name="Лента" id="60" picture-path="O:\Pictures" reportage-path="O:\Reportage" zero-reportage-path="O:\ReportageZero" xml-path="o:\xml" />
+  <library name="Архив ленты" id="152" picture-path="O:\Pictures_Stock" reportage-path="O:\Reportage_Stock" zero-reportage-path="O:\ReportageZero_Stock" xml-path="o:\xml" />
+</libraries>

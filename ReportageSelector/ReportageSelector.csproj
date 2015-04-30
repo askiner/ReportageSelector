@@ -66,7 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="CustomTextWriterTracelistener.cs" />
     <Compile Include="IProductionMethod.cs" />
+    <Compile Include="LibraryInfo.cs" />
     <Compile Include="Reportage.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -130,6 +132,11 @@
       <Project>{0f44723b-6d5f-416b-926f-c9137fc21361}</Project>
       <Name>UnidecodeSharpFork</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="libraries.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
