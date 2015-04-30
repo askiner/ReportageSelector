@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <connectionStrings>
+    <add name="Orphea" connectionString="Provider=OraOLEDB.Oracle;Data Source=SERVER;User Id=User_Id;Password=Password"/>
+  </connectionStrings>
+  <appSettings>
+    <add key="LibraryId_Lenta" value="Лента;60"/>
+    <add key="LibraryId_Stock" value="Архив ленты;152"/>
+    <add key="LastDaysCount" value="50"/>
+    <add key="ReportageQuery" value="SELECT ID_LIASSE, REF_REPORTAGE, DATE_LIASSE, LIB_LIASSE, CONCAT('http://tassphoto.com/thu_web/', CONCAT(fi.URL, fi.NOM_COPIE)) AS ImageUrl
+        FROM ORPHEA.LIASSES li
+        JOIN ORPHEA.FICHIERS fi ON fi.ID_OBJET = li.ID_DEFAULTOBJET 
+        WHERE fi.ID_TYPE = 2 AND ID_STOCK_LIASSE = {0} AND DATE_LIASSE &gt; sysdate - {1}
+        ORDER BY 3 DESC, 2 DESC"/>
+    <add key="PreviewTemplate" value="http://www.tassphoto.com/thu_web/{0}"/>
+    <add key="ClientSettingsProvider.ServiceUri" value=""/>
+    <add key="ReportageDelimeter" value="_"/>
+    <add key="Exiftool" value="X:\Фотохроника\IT\Общие\Fotostation\Scripts\exiftool.exe"/>
+    <add key="TraceSourceName" value="MainTraceSource" />
+    <!--<add key="TraceLogPath" value="X:\Фотохроника\Общее\logs" />-->
+    <add key="TraceLogPath" value="X:\Фотохроника\Общее\logs" />
+    
+    <add key="TraceListenerName" value="SeparateFileListener" />
+    <add key="TmpFolderName" value=".publish" />
+    <add key="PublicationInfoFile" value=".info" />
+    <add key="LibariesXML" value="libraries.xml" />
+  </appSettings>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
+  </startup>
+  <system.web>
+    <membership defaultProvider="ClientAuthenticationMembershipProvider">
+      <providers>
+        <add name="ClientAuthenticationMembershipProvider" type="System.Web.ClientServices.Providers.ClientFormsAuthenticationMembershipProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri=""/>
+      </providers>
+    </membership>
+    <roleManager defaultProvider="ClientRoleProvider" enabled="true">
+      <providers>
+        <add name="ClientRoleProvider" type="System.Web.ClientServices.Providers.ClientRoleProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri="" cacheTimeout="86400"/>
+      </providers>
+    </roleManager>
+  </system.web>
+<system.diagnostics>
+    <sources>
+      <source name="MainTraceSource" switchName="MainSwitch" switchType="System.Diagnostics.SourceSwitch">
+        <listeners>
+          <add name="console" />
+          <!--<add name="textdebug" />-->
+          <remove name="Default" />
+        </listeners>
+      </source>
+    </sources>
+    <switches>
+      <add name="MainSwitch" value="Verbose"/>
+    </switches>
+    <sharedListeners>
+      <add name="console" type="System.Diagnostics.ConsoleTraceListener" initializeData="false" />
+      <!--<add name="textdebug" type="System.Diagnostics.TextWriterTraceListener" initializeData="X:\Фотохроника\Общее\logs\ReportageSender-{0:yyyy}-{0:MM}-{0:dd}.txt" />-->
+    </sharedListeners>
+    <trace autoflush="true" indentsize="4">
+      <listeners>
+        <!--for noname trace-->
+        <add name="console" />
+      </listeners>
+    </trace>
+  </system.diagnostics>
+</configuration>
