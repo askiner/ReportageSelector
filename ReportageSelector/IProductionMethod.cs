@@ -242,9 +242,9 @@ namespace ReportageSelector
                         //return text.Replace(dateString, date.ToString("dd MMMM yyyy", System.Globalization.CultureInfo.CurrentCulture)).Replace("\"", "\\\"");
 
                         if (forXML)
-                            return text.Replace(dateString, date.ToString("dd MMMM yyyy", System.Globalization.CultureInfo.CurrentCulture));
+                            return text.Replace(dateString, date.ToString("d MMMM yyyy", System.Globalization.CultureInfo.CurrentCulture));
                         else
-                            return text.Replace(dateString, date.ToString("dd MMMM yyyy", System.Globalization.CultureInfo.CurrentCulture)).Replace("\"", "\\\"");
+                            return text.Replace(dateString, date.ToString("d MMMM yyyy", System.Globalization.CultureInfo.CurrentCulture)).Replace("\"", "\\\"");
                     }
                 }
             }

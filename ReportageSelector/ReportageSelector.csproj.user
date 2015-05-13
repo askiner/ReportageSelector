@@ -12,6 +12,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <StartArguments>C:\temp\debug\_MJ00377.jpg</StartArguments>
+    <StartArguments>"C:\temp\test\WP_20140829_003.jpg" "V:\2014\12-TEST\18\Метцель Михаил_Митинг-концерт, посв_#18888\hires\.publish\_MM00643.JPG"</StartArguments>
   </PropertyGroup>
 </Project>
