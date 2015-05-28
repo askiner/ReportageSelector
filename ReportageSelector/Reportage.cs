@@ -67,19 +67,19 @@ namespace ReportageSelector
 
     public interface IReportageRepository
     {
-        List<IReportage> GetReportageList(int libraryId);
+        List<IReportage> GetReportageList(int libraryId, int period);
     }
 
     public class ReportageRepository : IReportageRepository
     {
-        public List<IReportage> GetReportageList(int libraryId)
+        public List<IReportage> GetReportageList(int libraryId, int period)
         {
             List<IReportage> newList = new List<IReportage>();
 
             OleDbConnection connection = new OleDbConnection(Config.ConnectionString);
             {
                 connection.Open();
-                OleDbCommand Command = new OleDbCommand(Config.ReportageQuery(libraryId), connection);
+                OleDbCommand Command = new OleDbCommand(Config.ReportageQuery(libraryId, period), connection);
                 using(OleDbDataReader reader = Command.ExecuteReader(CommandBehavior.CloseConnection))
                 {
                     while (reader.Read())

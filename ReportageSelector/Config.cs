@@ -67,17 +67,9 @@ namespace ReportageSelector
             }
         }
 
-        public static int LastDaysCount 
+        public static string ReportageQuery(int libraryId, int period)
         {
-            get
-            {
-                return Convert.ToInt32(ConfigurationManager.AppSettings["LastDaysCount"]);
-            }
-        }
-
-        public static string ReportageQuery(int libraryId)
-        {
-            return String.Format(ReportageQueryTemplate, libraryId, Config.LastDaysCount);
+            return String.Format(ReportageQueryTemplate, libraryId, period);
         }
 
         public static string ReportageQueryTemplate

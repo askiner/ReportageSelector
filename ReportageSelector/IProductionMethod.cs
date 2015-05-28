@@ -18,6 +18,7 @@ namespace ReportageSelector
         string XMLFolder { get; set; }
         string Prefix { get; set; }
         string ReportageDelimeter { get; set; }
+        bool CheckOutputFolder();
     }
 
     public class ProductionMethod : IProductionMethod
@@ -39,9 +40,6 @@ namespace ReportageSelector
 
         public bool Produce(string file, string prefix)
         {
-            if (!Directory.Exists(OutputFolder))
-                MessageBox.Show(string.Format("Нет подключения к каталогу выпуска: {0}", OutputFolder));
-
             Metadata data = this.UpdateMetadata(file);
 
             if (OutputFolder != null && Directory.Exists(OutputFolder))
@@ -53,6 +51,17 @@ namespace ReportageSelector
             //Program.TraceMessage(System.Diagnostics.TraceEventType.Information, "")
 
             return true;
+        }
+
+        public bool CheckOutputFolder()
+        {
+            if (!Directory.Exists(OutputFolder))
+            {
+                MessageBox.Show(string.Format("Нет подключения к каталогу выпуска: {0}", OutputFolder));
+                return false;
+            }
+            else
+                return true;
         }
 
         private void MoveFileWithPrefix(string file, string prefix)
@@ -104,7 +113,7 @@ namespace ReportageSelector
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Config.Exiftool,
-                    Arguments = "-X -IPTC:All -charset Latin \"" + file + "\"",
+                    Arguments = "-X -IPTC:All -u -charset Latin \"" + file + "\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
@@ -141,7 +150,7 @@ namespace ReportageSelector
 
         protected Metadata UpdateMetadata(string file)
         {
-            string metadataUpdate = "-IPTC:ReleaseDate=now -IPTC:ReleaseTime=now -IPTC:DateCreatedDateTimeOriginal -IPTC:TimeCreated<DateTimeOriginal";
+            string metadataUpdate = "-IPTC:ReleaseDate=now -IPTC:ReleaseTime=now -IPTC:DateCreated<DateTimeOriginal -IPTC:TimeCreated<DateTimeOriginal";
             string fixtureIdentifier = Guid.NewGuid().ToString().Replace("-", "");
 
             Metadata NewMetadata = new Metadata();

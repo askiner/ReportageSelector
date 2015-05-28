@@ -93,6 +93,23 @@ namespace ReportageSelector
                         lib_info.XmlPath = node.Attributes["xml-path"].Value;
                     }
 
+                    if (!string.IsNullOrEmpty(node.Attributes["period"].Value))
+                    {
+                        if (node.Attributes["period"].Value.Length > 0)
+                        {
+                            try
+                            {
+                                lib_info.Period = Convert.ToInt32(node.Attributes["period"].Value);
+                            }
+                            catch 
+                            {
+                                lib_info.Period = LibraryInfo.DefaultPeriod; // By Default
+                            }
+                        }
+                        else
+                            lib_info.Period = LibraryInfo.DefaultPeriod; // By Default
+                    }
+
 
                     Libraries.Add(lib_info);
                 }

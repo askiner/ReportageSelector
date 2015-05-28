@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 
 namespace ReportageSelector
 {
+    /// <summary>
+    /// Parameters of database query. Contains parameters to build query.
+    /// </summary>
     public class LibraryInfo
     {
         public int Id { get; set; }
@@ -14,6 +18,13 @@ namespace ReportageSelector
         public string ReportageZeroPath { get; set; }
         public string XmlPath { get; set; }
 
+        /// <summary>
+        /// Deep of query
+        /// </summary>
+        public int Period { get; set; }
+
         public LibraryInfo() { }
+
+        public static readonly int DefaultPeriod = 3;
     }
 }

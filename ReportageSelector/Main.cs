@@ -29,7 +29,7 @@ namespace ReportageSelector
 
             PopulateLibraryList();
 
-            PopulateListBox(((LibraryInfo)LibraryListBox.Items[0]).Id);
+            PopulateListBox(((LibraryInfo)LibraryListBox.Items[0]).Id, ((LibraryInfo)LibraryListBox.Items[0]).Period);
 
             //storage = rep.GetReportageList();
 
@@ -81,11 +81,11 @@ namespace ReportageSelector
             LibraryListBox.SelectedIndex = 0;
         }
 
-        protected void PopulateListBox(int librarId)
+        protected void PopulateListBox(int librarId, int period)
         {
             IReportageRepository rep = new ReportageRepository();
 
-            ReportagesListBox.DataSource = rep.GetReportageList(librarId);
+            ReportagesListBox.DataSource = rep.GetReportageList(librarId, period);
 
             ReportagesListBox.DisplayMember = "DisplayName";
         }
@@ -222,21 +222,25 @@ namespace ReportageSelector
                     OkButton.Enabled = false;
 
                     Program.SetPrefix(Program.Files[0], prefix);
-
-                    foreach (string file in Program.Files)
+                    
+                    // check Output folder
+                    if (methodToProduce.CheckOutputFolder())
                     {
-                        if (!methodToProduce.Produce(file, prefix))
+                        foreach (string file in Program.Files)
                         {
-                            errors.Add(file);
+                            if (!methodToProduce.Produce(file, prefix))
+                            {
+                                errors.Add(file);
+                            }
+                            count++;
+                            ProgressBar.Value = (int)(((double)count / Program.Files.Count) * 100);
+                            //ProgressBar.Value += (int)((1.0 / Program.Files.Count) * 100);
+                            ProgressBar.Refresh();
                         }
-                        count++;
-                        ProgressBar.Value = (int)(((double)count / Program.Files.Count) * 100);
-                        //ProgressBar.Value += (int)((1.0 / Program.Files.Count) * 100);
-                        ProgressBar.Refresh();
-                    }
 
                         ProgressBar.Value = 100;
                         ProgressBar.Refresh();
+                    }
                 }                
             }
 
@@ -264,7 +268,7 @@ namespace ReportageSelector
                 LibraryInfo selectedItem = (LibraryInfo)LibraryListBox.SelectedValue;
 
                 //PopulateListBox(((ILibrary)LibraryListBox.SelectedValue).Id);
-                PopulateListBox(selectedItem.Id);
+                PopulateListBox(selectedItem.Id, selectedItem.Period);
 
                 this.NoReportageBox.Enabled = !string.IsNullOrEmpty(selectedItem.PicturesPath);
 

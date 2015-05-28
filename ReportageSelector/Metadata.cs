@@ -9,5 +9,7 @@ namespace ReportageSelector
     {
         public string Caption { get; set; }
         public string FixedIdentifier { get; set; }
+
+        //Writer-Editor
     }
 }
