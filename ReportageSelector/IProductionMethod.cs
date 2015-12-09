@@ -44,8 +44,16 @@ namespace ReportageSelector
 
             Metadata data = this.UpdateMetadata(file);
 
+            if (data == null)
+            {
+                //MessageBox.Show(string.Format("Ошибка при отправке файла {0}. Переименуйте файл и попробуйте еще раз.", file));
+                return false;
+            }
+
+#if !DEBUG
             if (OutputFolder != null && Directory.Exists(OutputFolder))
                 MoveFileWithPrefix(file, prefix);
+#endif
 
             if (XMLFolder !=null && Directory.Exists(XMLFolder))
                 this.CreateXML(data, Path.Combine(XMLFolder, Path.GetFileNameWithoutExtension(file) + ".xml"));
@@ -97,6 +105,7 @@ namespace ReportageSelector
             return fInfo.Name;
         }
 
+
         protected string GetCaption(string file)
         {
             Process proc = new Process
@@ -107,6 +116,7 @@ namespace ReportageSelector
                     Arguments = "-X -IPTC:All -charset Latin \"" + file + "\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true,
                     StandardOutputEncoding = Encoding.GetEncoding("Windows-1251")
                 }

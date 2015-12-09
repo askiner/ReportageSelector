@@ -235,8 +235,27 @@ namespace ReportageSelector
                         ProgressBar.Refresh();
                     }
 
-                        ProgressBar.Value = 100;
-                        ProgressBar.Refresh();
+                    ProgressBar.Value = 100;
+                    ProgressBar.Refresh();
+
+                    // errors handling
+                    if (errors.Count > 0)
+                    {
+                        StringBuilder errorsList = new StringBuilder();
+                        foreach(string elem in errors){
+                            if (errorsList.Length > 0)
+                                errorsList.AppendFormat("\n{0}", elem);
+                            else
+                                errorsList.AppendFormat("{0}", elem);                            
+                        }
+
+                        MessageBox.Show(
+                            string.Format("При выпуске файлов произошли ошибки:\n{0}\nПереименуйте их и выпустите повторно!", errorsList.ToString()),
+                            "Есть ошибки",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                            );
+                    }
                 }                
             }
 
