@@ -195,7 +195,7 @@
         private System.Windows.Forms.Label ReportagesListBoxLabel;
         private System.Windows.Forms.PictureBox PreviewBox;
         private System.Windows.Forms.Button OkButton;
-        private System.Windows.Forms.Button CancelButton;
+        new private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.RadioButton NewReportageBox;
         private System.Windows.Forms.RadioButton NoReportageBox;
         private System.Windows.Forms.CheckBox VisibilityCheckBox;

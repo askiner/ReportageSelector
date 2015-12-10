@@ -131,7 +131,7 @@ namespace ReportageSelector
                 {
                     Directory.CreateDirectory(Config.TraceLogPath);
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     MessageBox.Show(
                         string.Format("Невозможно создать каталог для записи log файлов: {0}", Config.TraceLogPath));
