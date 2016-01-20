@@ -45,6 +45,7 @@ Temporary Items
 ReportageSelector/obj
 ReportageSelector/bin
 ReportageSelector/App.config
+ReportageSelector/ReportageSelector.csproj.user
 
 ReportageSelector.v12.suo
 *.suo
