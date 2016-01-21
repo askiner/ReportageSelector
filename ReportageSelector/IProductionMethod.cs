@@ -21,6 +21,13 @@ namespace ReportageSelector
         bool CheckOutputFolder();
     }
 
+    public static class ExiftoolMetadataFieldName
+    {
+        public static string Caption { get { return "IPTC:Caption-Abstract"; } }
+        public static string Keywords { get { return "IPTC:Keywords"; } }
+        public static string Unused_1 { get { return "IPTC:IPTC_ApplicationRecord_1"; } } // special use for contains keywords
+    }
+
     public class ProductionMethod : IProductionMethod
     {
         private const string REPORTAGEDELIMETER = "_";
@@ -29,6 +36,8 @@ namespace ReportageSelector
         public string XMLFolder { get; set; }
         public string Prefix { get; set; }
         public string ReportageDelimeter { get; set; }
+
+        protected Dictionary<string, string> fileMetadata = null;
 
         public ProductionMethod(string jpgOutput, string xmlOutput, string prefix)
         {
@@ -117,8 +126,7 @@ namespace ReportageSelector
             return fInfo.Name;
         }
 
-
-        protected string GetCaption(string file)
+        protected Dictionary<string, string> GetMetadata(string file)
         {
             Process proc = new Process
             {
@@ -142,19 +150,36 @@ namespace ReportageSelector
 
                 if (Xmltext != null)
                 {
+
+                    Dictionary<string, string> result = new Dictionary<string, string>();
+
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.LoadXml(Xmltext);
 
-                    if (xmlDoc.GetElementsByTagName("IPTC:Caption-Abstract").Count > 0)
+                    //TODO: Merge data in IPTC:IPTC_ApplicationRecord_1 & IPTC:Keywords
+                    if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Caption).Count > 0)
                     {
-                        string caption = xmlDoc.GetElementsByTagName("IPTC:Caption-Abstract").Item(0).InnerText;
+                        string caption = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Caption).Item(0).InnerText;
 
                         if (caption.Contains("*** Local Caption *** "))
-                            return caption.Substring(caption.IndexOf(" *** Local Caption *** ") + " *** Local Caption *** ".Length, caption.Length - (caption.IndexOf(" *** Local Caption *** ") + " *** Local Caption *** ".Length));
+                            result.Add(ExiftoolMetadataFieldName.Caption, caption.Substring(caption.IndexOf(" *** Local Caption *** ") + " *** Local Caption *** ".Length, caption.Length - (caption.IndexOf(" *** Local Caption *** ") + " *** Local Caption *** ".Length)));
                         else
-                            return caption;
+                            result.Add(ExiftoolMetadataFieldName.Caption, caption);
                     }
 
+                    //TODO: read keywords from standart place and add them to dictionary Keywords - list
+                    if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Keywords).Count > 0)
+                    {
+
+                    }
+
+                    //TODO: read keywords from Unused #1 and add them to dictionary Keywords - string
+                    if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Unused_1).Count > 0)
+                    {
+
+                    }
+
+                    return result;
                 }
             }
 
@@ -174,14 +199,31 @@ namespace ReportageSelector
                 metadataUpdate = metadataUpdate + " -IPTC:FixtureIdentifier=\"" + NewMetadata.FixedIdentifier + "\"";
             }
 
-            string Caption = this.GetCaption(file);
-            if (Caption != null)
+
+            Dictionary<string, string> fileMetadata = GetMetadata(file);
+
+            if (fileMetadata != null)
             {
-                //NewMetadata.Caption = Caption;
-                NewMetadata.Caption = this.ConvertDate(Caption, true);
-                //metadataUpdate = metadataUpdate + " -IPTC:Caption-Abstract=\"" + this.ConvertDate(Caption) + "\"";
-                metadataUpdate = metadataUpdate + " -IPTC:Caption-Abstract=\"" + this.ConvertDate(Caption, false) + "\"";
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Caption))
+                {
+                    //NewMetadata.Caption = Caption;
+                    NewMetadata.Caption = this.ConvertDate(fileMetadata[ExiftoolMetadataFieldName.Caption], true);
+                    //metadataUpdate = metadataUpdate + " -IPTC:Caption-Abstract=\"" + this.ConvertDate(Caption) + "\"";
+                    metadataUpdate = metadataUpdate + " -IPTC:Caption-Abstract=\"" + this.ConvertDate(fileMetadata[ExiftoolMetadataFieldName.Caption], false) + "\"";
+                }
+
+
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Keywords))
+                {
+
+                }
+
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Unused_1))
+                {
+
+                }
             }
+
 
             // remove Fotostaion steps
             metadataUpdate = metadataUpdate + " -Fotostation:All= -IPTC:DocumentHistory=";

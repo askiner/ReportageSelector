@@ -7,8 +7,9 @@ namespace ReportageSelector
 {
     public class Metadata
     {
-        public string Caption { get; set; }
+        public string Caption { get; set; }        
         public string FixedIdentifier { get; set; }
+        public List<string> Keywords { get; set; }
 
         //Writer-Editor
     }
