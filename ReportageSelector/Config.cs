@@ -144,6 +144,17 @@ namespace ReportageSelector
             }
         }
 
+        public static string KeywordsSeparator
+        {
+            get
+            {
+                if (ConfigurationManager.AppSettings.AllKeys.Contains("KeywordsSeparator"))
+                    return ConfigurationManager.AppSettings["KeywordsSeparator"].ToString();
+                else
+                    return null;
+            }
+        }
+
         public static string XMLFolder
         {
             get

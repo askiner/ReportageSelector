@@ -18,6 +18,7 @@ namespace ReportageSelector
         string XMLFolder { get; set; }
         string Prefix { get; set; }
         string ReportageDelimeter { get; set; }
+        string KeywordsSeparator { get; set; }
         bool CheckOutputFolder();
     }
 
@@ -26,16 +27,21 @@ namespace ReportageSelector
         public static string Caption { get { return "IPTC:Caption-Abstract"; } }
         public static string Keywords { get { return "IPTC:Keywords"; } }
         public static string Unused_1 { get { return "IPTC:IPTC_ApplicationRecord_1"; } } // special use for contains keywords
+        public static string RDF_Bag { get { return "rdf:Bag"; } } // bag )container for list in exiftool XML format
+        public static string RDF_LI { get { return "rdf:li"; } } // list item in exiftool XML format
+
     }
 
     public class ProductionMethod : IProductionMethod
     {
         private const string REPORTAGEDELIMETER = "_";
+        private string _keywordsSeparator = ",";
 
         public string OutputFolder { get; set; }
         public string XMLFolder { get; set; }
         public string Prefix { get; set; }
         public string ReportageDelimeter { get; set; }
+        public string KeywordsSeparator { get { return _keywordsSeparator; } set { _keywordsSeparator = value; } }
 
         protected Dictionary<string, string> fileMetadata = null;
 
@@ -126,7 +132,7 @@ namespace ReportageSelector
             return fInfo.Name;
         }
 
-        protected Dictionary<string, string> GetMetadata(string file)
+        protected Dictionary<string, dynamic> GetMetadata(string file)
         {
             Process proc = new Process
             {
@@ -151,12 +157,11 @@ namespace ReportageSelector
                 if (Xmltext != null)
                 {
 
-                    Dictionary<string, string> result = new Dictionary<string, string>();
+                    Dictionary<string, dynamic> result = new Dictionary<string, dynamic>();
 
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.LoadXml(Xmltext);
 
-                    //TODO: Merge data in IPTC:IPTC_ApplicationRecord_1 & IPTC:Keywords
                     if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Caption).Count > 0)
                     {
                         string caption = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Caption).Item(0).InnerText;
@@ -167,16 +172,55 @@ namespace ReportageSelector
                             result.Add(ExiftoolMetadataFieldName.Caption, caption);
                     }
 
-                    //TODO: read keywords from standart place and add them to dictionary Keywords - list
-                    if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Keywords).Count > 0)
-                    {
+                    List<string> keywords = new List<string>();
 
+                    // read keywords from standart field and add them to temporary field
+                    if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Keywords).Count > 0)
+                    {                        
+                        
+                        XmlNode XmlKeywordsNode = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Keywords).Item(0);
+
+                        if (XmlKeywordsNode.HasChildNodes)
+                        {
+                            foreach (XmlNode mBagNode in XmlKeywordsNode.ChildNodes)
+                            {
+                                if (mBagNode.Name == ExiftoolMetadataFieldName.RDF_Bag)
+                                {
+                                    if (mBagNode.HasChildNodes)
+                                    {
+                                        foreach (XmlNode liNode in mBagNode.ChildNodes)
+                                        {
+                                            if (liNode.InnerText.Trim().Length > 2 && !keywords.Contains(liNode.InnerText.Trim()))
+                                                keywords.Add(liNode.InnerText.Trim());
+                                        }
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
                     }
 
-                    //TODO: read keywords from Unused #1 and add them to dictionary Keywords - string
+                    //read keywords from Unused #1 and add them to dictionary Keywords - string
                     if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Unused_1).Count > 0)
                     {
+                        // this field contains a string, with list of keywords delimeters with "," or ";"
+                        string AdditionalKeywords = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Unused_1).Item(0).InnerText;
 
+                        if (!string.IsNullOrEmpty(AdditionalKeywords))
+                        {
+                            foreach(string keyItem in AdditionalKeywords.Replace(',', ';').Trim().Split(';'))
+                            {
+                                if (!string.IsNullOrEmpty(keyItem.Trim()) && !keywords.Contains(keyItem.Trim()))
+                                    keywords.Add(keyItem.Trim());
+                            }
+                        }
+                    }
+
+                    // if list of keywords collected - add them into object of collected metadata
+                    if (keywords.Count > 0)
+                    {
+                        result[ExiftoolMetadataFieldName.Keywords] = keywords;
                     }
 
                     return result;
@@ -188,6 +232,8 @@ namespace ReportageSelector
 
         protected Metadata UpdateMetadata(string file)
         {
+            RemoveReadonlyFlag(file);
+
             string metadataUpdate = "-IPTC:ReleaseDate=now -IPTC:ReleaseTime=now -IPTC:DateCreated<DateTimeOriginal -IPTC:TimeCreated<DateTimeOriginal";
             string fixtureIdentifier = Guid.NewGuid().ToString().Replace("-", "");
 
@@ -200,7 +246,7 @@ namespace ReportageSelector
             }
 
 
-            Dictionary<string, string> fileMetadata = GetMetadata(file);
+            Dictionary<string, dynamic> fileMetadata = GetMetadata(file);            
 
             if (fileMetadata != null)
             {
@@ -212,15 +258,10 @@ namespace ReportageSelector
                     metadataUpdate = metadataUpdate + " -IPTC:Caption-Abstract=\"" + this.ConvertDate(fileMetadata[ExiftoolMetadataFieldName.Caption], false) + "\"";
                 }
 
-
-                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Keywords))
+                // rdf:Bag, rdf:li
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Keywords) && fileMetadata[ExiftoolMetadataFieldName.Keywords] != null)
                 {
-
-                }
-
-                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Unused_1))
-                {
-
+                    NewMetadata.Keywords = fileMetadata[ExiftoolMetadataFieldName.Keywords];
                 }
             }
 
@@ -338,8 +379,25 @@ namespace ReportageSelector
 
             root.AppendChild(doc.CreateElement("captionweb")).InnerText = data.Caption;
             root.AppendChild(doc.CreateElement("fixident")).InnerText = data.FixedIdentifier;
+
+            //
+            //TODO: Add all IPTC keywords here
+            //
+            if (data.Keywords != null && data.Keywords.Count > 0)
+            {
+                data.Keywords.Sort();
+                root.AppendChild(doc.CreateElement("keyword")).InnerText = string.Join(this.KeywordsSeparator, data.Keywords.ToArray());
+            }
+
             doc.Save(destination);
             return true;
+        }
+
+        public void RemoveReadonlyFlag(string file)
+        {
+            FileAttributes attributes = File.GetAttributes(file);
+            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                File.SetAttributes(file, attributes & ~FileAttributes.ReadOnly);
         }
 
     }

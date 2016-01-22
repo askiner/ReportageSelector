@@ -219,6 +219,10 @@ namespace ReportageSelector
                     if (Config.ReportageDelimeter != null && Config.ReportageDelimeter.Length > 0)
                         methodToProduce.ReportageDelimeter = Config.ReportageDelimeter;
 
+                    if (Config.KeywordsSeparator != null && Config.KeywordsSeparator.Length > 0)
+                        methodToProduce.KeywordsSeparator = Config.KeywordsSeparator;
+
+
                     OkButton.Enabled = false;
 
                     Program.SetPrefix(Program.Files[0], prefix);
