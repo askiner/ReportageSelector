@@ -43,6 +43,8 @@ namespace ReportageSelector
 
             GetLibraries();
 
+            CountryUtility.LoadDictionary(Config.CountryList);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Main());

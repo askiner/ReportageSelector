@@ -24,6 +24,7 @@
     <add key="TmpFolderName" value=".publish" />
     <add key="PublicationInfoFile" value=".info" />
     <add key="LibariesXML" value="libraries.xml" />
+    <add key="CountryList" value="countries.csv" />
   </appSettings>
   <startup>
     <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>

@@ -21,7 +21,10 @@ namespace ReportageSelector
             get { return ConfigurationManager.AppSettings["LibariesXML"].ToString(); }
         }
 
-
+        public static string CountryList
+        {
+            get { return ConfigurationManager.AppSettings["CountryList"].ToString(); }
+        }
 
         public static KeyValuePair<string, int> LibraryId_Lenta 
         {

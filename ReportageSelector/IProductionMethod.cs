@@ -29,7 +29,21 @@ namespace ReportageSelector
         public static string Unused_1 { get { return "IPTC:IPTC_ApplicationRecord_1"; } } // special use for contains keywords
         public static string RDF_Bag { get { return "rdf:Bag"; } } // bag )container for list in exiftool XML format
         public static string RDF_LI { get { return "rdf:li"; } } // list item in exiftool XML format
+        public static string CountryCode { get { return "IPTC:Country-PrimaryLocationCode"; } } // list item in exiftool XML format
+        public static string CountryName { get { return "IPTC:Country-PrimaryLocationName"; } } // list item in exiftool XML format
+        public static string CountryNameEn { get { return "Custom:Country-PrimaryLocationNameEn"; } } // list item in exiftool XML format
+    }
 
+    public static class OrpheaXMLInputField
+    {
+        public static string Root { get { return "assets"; } }
+        public static string ObjectId { get { return "id_objet"; } }
+        public static string CaptionRus { get { return "captionweb"; } }
+        public static string FixtureIdentifier { get { return "fixident"; } }
+        public static string Keywords { get { return "keyword"; } }
+        public static string CountryRus { get { return "country"; } }
+        public static string CountryEng { get { return "country_en"; } }
+        public static string CountryCode { get { return "countrycode"; } }
     }
 
     public class ProductionMethod : IProductionMethod
@@ -223,6 +237,30 @@ namespace ReportageSelector
                         result[ExiftoolMetadataFieldName.Keywords] = keywords;
                     }
 
+                    // countries - prepare to load to XML
+                    if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.CountryName).Count > 0) // if we get countries only
+                    {
+                        string countryName = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.CountryName).Item(0).InnerText;
+
+                        string countryCode = null;
+
+                        if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.CountryCode).Count > 0)
+                        {
+                            countryCode = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.CountryCode).Item(0).InnerText;
+                        }
+
+                        // if country is not empty and code is null or empty, than try to find in dictionary
+                        if (!string.IsNullOrEmpty(countryName) && string.IsNullOrEmpty(countryCode))
+                        {
+                            if (CountryUtility.GetCountryByName(countryName) != null)
+                            {                                
+                                result.Add(ExiftoolMetadataFieldName.CountryCode, CountryUtility.GetCountryByName(countryName).Code);
+                                result.Add(ExiftoolMetadataFieldName.CountryName, CountryUtility.GetCountryByName(countryName).NameRu);
+                                result.Add(ExiftoolMetadataFieldName.CountryNameEn, CountryUtility.GetCountryByName(countryName).NameEn);
+                            }
+                        }
+                    }
+
                     return result;
                 }
             }
@@ -262,6 +300,21 @@ namespace ReportageSelector
                 if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Keywords) && fileMetadata[ExiftoolMetadataFieldName.Keywords] != null)
                 {
                     NewMetadata.Keywords = fileMetadata[ExiftoolMetadataFieldName.Keywords];
+                }
+
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.CountryCode))
+                {
+                    NewMetadata.CountryCode = fileMetadata[ExiftoolMetadataFieldName.CountryCode];
+                }
+
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.CountryName))
+                {
+                    NewMetadata.CountryName = fileMetadata[ExiftoolMetadataFieldName.CountryName];
+                }
+
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.CountryNameEn))
+                {
+                    NewMetadata.CountryNameEn = fileMetadata[ExiftoolMetadataFieldName.CountryNameEn];
                 }
             }
 
@@ -375,19 +428,34 @@ namespace ReportageSelector
 
             doc.AppendChild(doc.CreateXmlDeclaration("1.0", "UTF-8", null));
 
-            XmlElement root = (XmlElement)doc.AppendChild(doc.CreateElement("assets"));
+            XmlElement root = (XmlElement)doc.AppendChild(doc.CreateElement(OrpheaXMLInputField.Root));
 
-            root.AppendChild(doc.CreateElement("captionweb")).InnerText = data.Caption;
-            root.AppendChild(doc.CreateElement("fixident")).InnerText = data.FixedIdentifier;
+            root.AppendChild(doc.CreateElement(OrpheaXMLInputField.CaptionRus)).InnerText = data.Caption;
+            root.AppendChild(doc.CreateElement(OrpheaXMLInputField.FixtureIdentifier)).InnerText = data.FixedIdentifier;
 
-            //
-            //TODO: Add all IPTC keywords here
-            //
+            // keywords
             if (data.Keywords != null && data.Keywords.Count > 0)
             {
                 data.Keywords.Sort();
-                root.AppendChild(doc.CreateElement("keyword")).InnerText = string.Join(this.KeywordsSeparator, data.Keywords.ToArray());
+                root.AppendChild(doc.CreateElement(OrpheaXMLInputField.Keywords)).InnerText = string.Join(this.KeywordsSeparator, data.Keywords.ToArray());
             }
+
+            // countries related data
+            if (!string.IsNullOrEmpty(data.CountryCode))
+            {
+                root.AppendChild(doc.CreateElement(OrpheaXMLInputField.CountryCode)).InnerText = data.CountryCode;
+            }
+
+            if (!string.IsNullOrEmpty(data.CountryName))
+            {
+                root.AppendChild(doc.CreateElement(OrpheaXMLInputField.CountryRus)).InnerText = data.CountryName;
+            }
+
+            // Commented to prevent save English keywords into russian newswires
+            //if (!string.IsNullOrEmpty(data.CountryNameEn))
+            //{
+            //    root.AppendChild(doc.CreateElement(OrpheaXMLInputField.CountryEng)).InnerText = data.CountryNameEn;
+            //}
 
             doc.Save(destination);
             return true;
