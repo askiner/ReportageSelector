@@ -32,7 +32,8 @@ namespace ReportageSelector
             AddTrace();
 
             // map special disk to upload production files
-            MapProductionDrive();
+            // Not used
+            //MapProductionDrive();
 
             TraceMessage(TraceEventType.Verbose, "Open", string.Join(";", args));
 

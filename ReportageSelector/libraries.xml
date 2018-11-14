@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><libraries>
-  <library name="Лента" id="60" picture-path="O:\Pictures" reportage-path="O:\Reportage" zero-reportage-path="O:\ReportageZero" xml-path="o:\xml" period="3" />
-  <library name="Архив ленты" id="152" picture-path="O:\Pictures_Stock" reportage-path="O:\Reportage_Stock" zero-reportage-path="O:\ReportageZero_Stock" xml-path="o:\xml" period="3" />
-  <library xml-path="o:\xml" zero-reportage-path="O:\reserve" reportage-path="O:\reserve" picture-path="" id="155" name="Резерв" period="365"/>
+  <library name="Лента" id="9" picture-path="S:\FTP\Photo\assets\TASS\pictures" reportage-path="S:\FTP\Photo\assets\TASS\reportage" zero-reportage-path="S:\FTP\Photo\assets\TASS\reportagezero" xml-path="S:\FTP\Photo\assets\TASS\xml" period="3" />
+  <library name="Архив ленты" id="30" picture-path="S:\FTP\Photo\assets\TASS\pictures stock" reportage-path="S:\FTP\Photo\assets\TASS\reportage stock" zero-reportage-path="S:\FTP\Photo\assets\TASS\reportagezero stock" xml-path="S:\FTP\Photo\assets\TASS\xml" period="3" />
+<library name="Резерв" id="155" picture-path="" reportage-path="S:\FTP\Photo\assets\TASS\reserve" zero-reportage-path="S:\FTP\Photo\assets\TASS\reserve" xml-path="S:\FTP\Photo\assets\TASS\xml" period="365" />
+<library name="Handout" id="166" picture-path="O:\pictures_free" reportage-path="O:\reportage_free" zero-reportage-path="O:\reportagezero_free" xml-path="S:\FTP\Photo\assets\TASS\xml" period="3" />
 </libraries>

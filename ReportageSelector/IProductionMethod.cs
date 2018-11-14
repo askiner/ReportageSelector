@@ -27,11 +27,13 @@ namespace ReportageSelector
         public static string Caption { get { return "IPTC:Caption-Abstract"; } }
         public static string Keywords { get { return "IPTC:Keywords"; } }
         public static string Unused_1 { get { return "IPTC:IPTC_ApplicationRecord_1"; } } // special use for contains keywords
+        public static string Unused_2 { get { return "IPTC:IPTC_ApplicationRecord_2"; } } // special use for contains credit
         public static string RDF_Bag { get { return "rdf:Bag"; } } // bag )container for list in exiftool XML format
         public static string RDF_LI { get { return "rdf:li"; } } // list item in exiftool XML format
         public static string CountryCode { get { return "IPTC:Country-PrimaryLocationCode"; } } // list item in exiftool XML format
         public static string CountryName { get { return "IPTC:Country-PrimaryLocationName"; } } // list item in exiftool XML format
         public static string CountryNameEn { get { return "Custom:Country-PrimaryLocationNameEn"; } } // list item in exiftool XML format
+        public static string Source { get { return "IPTC:Source"; } }
     }
 
     public static class OrpheaXMLInputField
@@ -44,6 +46,7 @@ namespace ReportageSelector
         public static string CountryRus { get { return "country"; } }
         public static string CountryEng { get { return "country_en"; } }
         public static string CountryCode { get { return "countrycode"; } }
+        public static string Source { get { return "source"; } }
     }
 
     public class ProductionMethod : IProductionMethod
@@ -67,30 +70,44 @@ namespace ReportageSelector
             this.ReportageDelimeter = REPORTAGEDELIMETER;
         }
 
-        public bool Produce(string file, string prefix)
-        {
+        public bool Produce(string origFile, string prefix)
+        {            
             if (!Directory.Exists(OutputFolder))
                 MessageBox.Show(string.Format("Нет подключения к каталогу выпуска: {0}", OutputFolder));
 
-            Metadata data = this.UpdateMetadata(file);
-
-            if (data == null)
+            using (TempFile tmpFile = new TempFile(origFile, Config.TempPath))
             {
-                //MessageBox.Show(string.Format("Ошибка при отправке файла {0}. Переименуйте файл и попробуйте еще раз.", file));
-                return false;
-            }
+                if (tmpFile.Error) {
+                    MessageBox.Show(
+                        string.Format("При копировании файла во временный каталог произошли ошибки:\n{0}", tmpFile.ErrorMessage),
+                        "Ошибка",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return false;
+                }
+
+                string file = tmpFile.TempFileName;
+
+                Metadata data = this.UpdateMetadata(file);
+
+                if (data == null)
+                {
+                    //MessageBox.Show(string.Format("Ошибка при отправке файла {0}. Переименуйте файл и попробуйте еще раз.", file));
+                    return false;
+                }
 
 #if !DEBUG
             if (OutputFolder != null && Directory.Exists(OutputFolder))
                 MoveFileWithPrefix(file, prefix);
 #endif
 
-            if (XMLFolder !=null && Directory.Exists(XMLFolder))
-                this.CreateXML(data, Path.Combine(XMLFolder, Path.GetFileNameWithoutExtension(file) + ".xml"));
+                if (XMLFolder != null && Directory.Exists(XMLFolder))
+                    this.CreateXML(data, Path.Combine(XMLFolder, Path.GetFileNameWithoutExtension(file) + ".xml"));
 
-            //Program.TraceMessage(System.Diagnostics.TraceEventType.Information, "")
+                //Program.TraceMessage(System.Diagnostics.TraceEventType.Information, "")
 
-            return true;
+                return true;
+            }
         }
 
         public bool CheckOutputFolder()
@@ -118,7 +135,9 @@ namespace ReportageSelector
 
             try
             {
-                File.Move(file, DestinationFileName);
+                // File.Move(file, DestinationFileName);
+                File.Copy(file, DestinationFileName);
+                //File.Delete(file);
             }
             catch
             {
@@ -190,8 +209,8 @@ namespace ReportageSelector
 
                     // read keywords from standart field and add them to temporary field
                     if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Keywords).Count > 0)
-                    {                        
-                        
+                    {
+
                         XmlNode XmlKeywordsNode = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Keywords).Item(0);
 
                         if (XmlKeywordsNode.HasChildNodes)
@@ -223,7 +242,7 @@ namespace ReportageSelector
 
                         if (!string.IsNullOrEmpty(AdditionalKeywords))
                         {
-                            foreach(string keyItem in AdditionalKeywords.Replace(',', ';').Trim().Split(';'))
+                            foreach (string keyItem in AdditionalKeywords.Replace(',', ';').Trim().Split(';'))
                             {
                                 if (!string.IsNullOrEmpty(keyItem.Trim()) && !keywords.Contains(keyItem.Trim()))
                                     keywords.Add(keyItem.Trim());
@@ -253,13 +272,26 @@ namespace ReportageSelector
                         if (!string.IsNullOrEmpty(countryName) && string.IsNullOrEmpty(countryCode))
                         {
                             if (CountryUtility.GetCountryByName(countryName) != null)
-                            {                                
+                            {
                                 result.Add(ExiftoolMetadataFieldName.CountryCode, CountryUtility.GetCountryByName(countryName).Code);
                                 result.Add(ExiftoolMetadataFieldName.CountryName, CountryUtility.GetCountryByName(countryName).NameRu);
                                 result.Add(ExiftoolMetadataFieldName.CountryNameEn, CountryUtility.GetCountryByName(countryName).NameEn);
                             }
                         }
                     }
+
+                    // set default Source if empty
+                    if (xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Source).Count > 0)
+                    {
+                        string source = xmlDoc.GetElementsByTagName(ExiftoolMetadataFieldName.Source).Item(0).InnerText;
+
+                        if (source != null)
+                            result.Add(ExiftoolMetadataFieldName.Source, source);
+                        else
+                            result.Add(ExiftoolMetadataFieldName.Source, Config.DefaultMetadataSource);
+                    }
+                    else
+                        result.Add(ExiftoolMetadataFieldName.Source, Config.DefaultMetadataSource);
 
                     return result;
                 }
@@ -272,7 +304,7 @@ namespace ReportageSelector
         {
             RemoveReadonlyFlag(file);
 
-            string metadataUpdate = "-IPTC:ReleaseDate=now -IPTC:ReleaseTime=now -IPTC:DateCreated<DateTimeOriginal -IPTC:TimeCreated<DateTimeOriginal";
+            string metadataUpdate = "-IPTC:ReleaseDate=now -IPTC:ReleaseTime=now -IPTC:DateCreated<ModifyDate -IPTC:DateCreated<CreateDate -IPTC:DateCreated<DateTimeOriginal -IPTC:TimeCreated<DateTimeOriginal";
             string fixtureIdentifier = Guid.NewGuid().ToString().Replace("-", "");
 
             Metadata NewMetadata = new Metadata();
@@ -294,6 +326,13 @@ namespace ReportageSelector
                     NewMetadata.Caption = this.ConvertDate(fileMetadata[ExiftoolMetadataFieldName.Caption], true);
                     //metadataUpdate = metadataUpdate + " -IPTC:Caption-Abstract=\"" + this.ConvertDate(Caption) + "\"";
                     metadataUpdate = metadataUpdate + " -IPTC:Caption-Abstract=\"" + this.ConvertDate(fileMetadata[ExiftoolMetadataFieldName.Caption], false) + "\"";
+                }
+
+                // add source to update
+                if (fileMetadata.ContainsKey(ExiftoolMetadataFieldName.Source))
+                {
+                    NewMetadata.Source = fileMetadata[ExiftoolMetadataFieldName.Source];
+                    metadataUpdate = metadataUpdate + " -IPTC:Source=\"" + fileMetadata[ExiftoolMetadataFieldName.Source] + "\"";
                 }
 
                 // rdf:Bag, rdf:li
@@ -328,7 +367,7 @@ namespace ReportageSelector
                 {
                     FileName = Config.Exiftool,
                     //Arguments = metadataUpdate + " -charset UTF8 -overwrite_original \"" + file + "\"",
-                    Arguments = metadataUpdate + " -charset Latin -overwrite_original \"" + file + "\"",
+                    Arguments = metadataUpdate + " -charset Latin -overwrite_original -m \"" + file + "\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
@@ -449,6 +488,11 @@ namespace ReportageSelector
             if (!string.IsNullOrEmpty(data.CountryName))
             {
                 root.AppendChild(doc.CreateElement(OrpheaXMLInputField.CountryRus)).InnerText = data.CountryName;
+            }
+
+            if (!string.IsNullOrEmpty(data.Source))
+            {
+                root.AppendChild(doc.CreateElement(OrpheaXMLInputField.Source)).InnerText = data.Source;
             }
 
             // Commented to prevent save English keywords into russian newswires

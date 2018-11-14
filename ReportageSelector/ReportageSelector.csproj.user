@@ -12,6 +12,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <StartArguments>"C:\temp\test\WP_20140829_003.jpg" "V:\2014\12-TEST\18\Метцель Михаил_Митинг-концерт, посв_#18888\hires\.publish\_MM00643.JPG"</StartArguments>
+    <StartArguments>"S:\Съемки\СОБИРАЕМ\Макеева метро_подпапки\11_Нахимовский проспект_НЕ ИСПОЛЬЗОВАТЬ\.publish\_TML2194_3.jpg"</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <StartArguments>S:\Съемки\2018\06\15\Deutsche Fan\.publish\IMG_0564.jpg</StartArguments>
   </PropertyGroup>
 </Project>

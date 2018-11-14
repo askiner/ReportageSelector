@@ -8,6 +8,8 @@ namespace ReportageSelector
 {
     public abstract class Config
     {
+        private static string DEFAULT_METADATA_SOURCE = "ТАСС";
+
         public static string ConnectionString 
         { 
             get
@@ -26,6 +28,7 @@ namespace ReportageSelector
             get { return ConfigurationManager.AppSettings["CountryList"].ToString(); }
         }
 
+        [Obsolete("Will be deleted in next versions!")]
         public static KeyValuePair<string, int> LibraryId_Lenta 
         {
             get
@@ -44,6 +47,7 @@ namespace ReportageSelector
             }
         }
 
+        [Obsolete("Will be deleted in next versions!")]
         public static KeyValuePair<string, int> LibraryId_Stock
         {
             get
@@ -174,11 +178,32 @@ namespace ReportageSelector
             }
         }
 
+        private static string _exifTool = null;
         public static string Exiftool
         {
             get
             {
-                return ConfigurationManager.AppSettings["Exiftool"].ToString();
+                if (_exifTool == null)
+                {
+                    _exifTool = ConfigurationManager.AppSettings["Exiftool"].ToString();
+                }
+
+                return _exifTool;
+            }
+            set
+            {
+                _exifTool = value;
+            }
+        }
+
+        public static string DefaultMetadataSource
+        {
+            get
+            {
+                if (ConfigurationManager.AppSettings.AllKeys.Contains("DefaultMetadataSource"))
+                    return ConfigurationManager.AppSettings["DefaultMetadataSource"].ToString();
+                else
+                    return DEFAULT_METADATA_SOURCE;
             }
         }
 
@@ -209,6 +234,19 @@ namespace ReportageSelector
                     return ConfigurationManager.AppSettings["AttachPassword"].ToString();
                 else
                     return null;
+            }
+        }
+
+
+        private static string _tempPath = "c:\\temp";
+        public static string TempPath
+        {
+            get
+            {
+                if (ConfigurationManager.AppSettings["TempPath"] != null)
+                    return ConfigurationManager.AppSettings["TempPath"].ToString();
+                else
+                    return _tempPath;
             }
         }
     }
