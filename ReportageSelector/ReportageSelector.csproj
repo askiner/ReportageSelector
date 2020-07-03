@@ -123,6 +123,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="App.config - Копировать.example" />
     <None Include="App.config.example" />
     <None Include="countries.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -166,12 +167,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\unidecodesharpfork\UnidecodeSharpFork\UnidecodeSharpFork.csproj">
-      <Project>{0f44723b-6d5f-416b-926f-c9137fc21361}</Project>
-      <Name>UnidecodeSharpFork</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -12,7 +12,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <StartArguments>"S:\Съемки\СОБИРАЕМ\Макеева метро_подпапки\11_Нахимовский проспект_НЕ ИСПОЛЬЗОВАТЬ\.publish\_TML2194_3.jpg"</StartArguments>
+    <StartArguments>C:\Users\shkirya_a\Documents\Севмаш_Подлодка\.publish\MVV_2787.jpg</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>S:\Съемки\2018\06\15\Deutsche Fan\.publish\IMG_0564.jpg</StartArguments>

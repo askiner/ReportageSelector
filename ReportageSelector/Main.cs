@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
-using UnidecodeSharpFork;
+// using UnidecodeSharpFork;
 
 namespace ReportageSelector
 {
